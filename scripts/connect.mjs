@@ -1,21 +1,16 @@
 import pool from './postgres.mjs';
 
-const fetchDataFromDB = async () => {
+export async function fetchDataFromDB() {
   try {
     const client = await pool.connect();
     console.log('Connected to database !');
 
-    const result = await client.query('SELECT * FROM public.user');
-    const data = result.rows;
-    console.log('Fetched data:', data);
-
-    client.release();
-    return data;
+    return client;
   } catch (error) {
     console.error('Error fetching data:', error);
     throw error;
   }
-};
+}
 
 fetchDataFromDB()
   .then((data) => {
