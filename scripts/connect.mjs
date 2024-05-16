@@ -14,8 +14,8 @@ export async function fetchDataFromDB() {
 
 fetchDataFromDB()
   .then((data) => {
-    console.log('Received data:', data);
+    // console.log('Received data:', data);
   })
   .catch((err) => {
-    console.error('Error fetching data:', error);
+    console.error('Error fetching data:', err);
   });
