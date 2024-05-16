@@ -86,3 +86,36 @@ export type InvoiceForm = {
   amount: number;
   status: 'pending' | 'paid';
 };
+
+export type Product = {
+  id: string;
+  designation: string;
+  family: number;
+  brand: number;
+  pcb: number;
+  mini: number;
+  gencod: string;
+};
+
+export type Order = {
+  id: string;
+  reference: string;
+  id_customer: string;
+  id_user: string;
+  state: number;
+  total_discount: number;
+  total_price: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type OrderLine = {
+  id: string;
+  id_order: string;
+  id_product: string;
+  product_designation: string;
+  quantity: number;
+  product_price: number;
+  discount: number;
+  product_reference: string;
+};

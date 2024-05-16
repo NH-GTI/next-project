@@ -1,4 +1,5 @@
 import pkg from 'pg';
+import { fetchDataFromDB } from './connect.mjs';
 const { Pool } = pkg;
 let conn;
 
@@ -12,7 +13,7 @@ if (!conn) {
   });
 }
 
-const { invoices, customers, revenue, users } = await import(
+const { invoices, customers, revenue, users, products } = await import(
   '../app/lib/placeholder-data.js'
 );
 
@@ -180,13 +181,133 @@ async function seedRevenue(client) {
   }
 }
 
+async function seedProducts(client) {
+  try {
+    await client.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
+    // Create the "users" table if it doesn't exist
+    const createTable = await client.query(`
+      CREATE TABLE IF NOT EXISTS products (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        family INT NOT NULL, 
+        brand INT NOT NULL,
+        reference VARCHAR(20) NOT NULL,
+        designation VARCHAR(250) NOT NULL,
+        gencod VARCHAR(20) NOT NULL,
+        pcb INT NOT NULL,
+        mini INT NOT NULL,
+        deee INT NULL,
+        price FLOAT NOT NULL,
+        customer INT NOT NULL
+      );
+    `);
+
+    console.log(`Created "products" table`);
+
+    // Insert data into the "productsd" table
+    const insertedProducts = await Promise.all(
+      products.map(async (product) => {
+        console.log(
+          product.family,
+          product.brand,
+          product.reference,
+          product.designation,
+          product.gencod,
+          product.pcb,
+          product.mini,
+          product.deee,
+          product.price,
+          product.customer,
+        );
+        return client.query(
+          `
+        INSERT INTO products (family, brand, reference, designation, gencod, pcb, mini, deee, price, customer)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        ON CONFLICT (id) DO NOTHING;`,
+          [
+            product.family,
+            product.brand,
+            product.reference,
+            product.designation,
+            product.gencod,
+            product.pcb,
+            product.mini,
+            product.deee,
+            product.price,
+            product.customer,
+          ],
+        );
+      }),
+    );
+
+    console.log(`Seeded ${insertedProducts.length} products`);
+
+    return {
+      createTable,
+      products: insertedProducts,
+    };
+  } catch (error) {
+    console.error('Error seeding products:', error);
+    throw error;
+  }
+}
+
+async function seedOrders(client) {
+  try {
+    await client.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
+    // Create the "users" table if it doesn't exist
+    const createTable = await client.query(`
+      CREATE TABLE IF NOT EXISTS orders (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        reference VARCHAR(20) NOT NULL, 
+        id_customer INT NOT NULL,
+        id_user INT NOT NULL,
+        state INT NOT NULL,
+        total_discount FLOAT NOT NULL,
+        total_price FLOAT NOT NULL,
+        created_at DATETIME NOT NULL,
+        updated_at DATETIME INT NULL
+      );
+    `);
+
+    // Insert data into the "productsd" table
+    const insertedOrders = await Promise.all(
+      products.map(async (product) => {
+        return client.query(
+          `
+        INSERT INTO orders (reference, id_customer, id_user, state, total_discount, total_price, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        ON CONFLICT (id) DO NOTHING;`,
+          [
+            order.reference,
+            order.id_customer,
+            order.id_user,
+            order.state,
+            order.total_discount,
+            order.total_price,
+            order.created_at,
+            order.updated_at,
+          ],
+        );
+      }),
+    );
+
+    console.log(`Seeded ${insertedOrders.length} orders`);
+
+    return {
+      createTable,
+      orders: insertedOrders,
+    };
+  } catch (error) {}
+}
+
 async function main() {
   const client = await conn.connect();
 
-  await seedUsers(client);
-  await seedCustomers(client);
-  await seedInvoices(client);
-  await seedRevenue(client);
+  // await seedUsers(client);
+  // await seedCustomers(client);
+  // await seedInvoices(client);
+  // await seedRevenue(client);
+  await seedProducts(client);
 
   await client.end();
 }
