@@ -2,12 +2,14 @@
 
 import Image from 'next/image';
 import { Product } from '../../lib/definitions';
+import { useState } from 'react';
 
 interface ProductProps {
   product: Product;
 }
 
 const ProductComponent: React.FC<ProductProps> = ({ product }) => {
+  const [order, setOrder] = useState({});
   function handleAddToOrder() {}
 
   return (
