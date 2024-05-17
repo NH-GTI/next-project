@@ -13,9 +13,8 @@ if (!conn) {
   });
 }
 
-const { invoices, customers, revenue, users, products } = await import(
-  '../app/lib/placeholder-data.js'
-);
+const { invoices, customers, revenue, users, products, orders, order_lines } =
+  await import('../app/lib/placeholder-data.js');
 
 const bcrypt = import('bcrypt');
 
@@ -264,14 +263,14 @@ async function seedOrders(client) {
         state INT NOT NULL,
         total_discount FLOAT NOT NULL,
         total_price FLOAT NOT NULL,
-        created_at DATETIME NOT NULL,
-        updated_at DATETIME INT NULL
+        created_at DATE NOT NULL DEFAULT CURRENT_DATE,
+        updated_at DATE NOT NULL DEFAULT CURRENT_DATE
       );
     `);
 
-    // Insert data into the "productsd" table
+    // Insert data into the "products" table
     const insertedOrders = await Promise.all(
-      products.map(async (product) => {
+      orders.map(async (order) => {
         return client.query(
           `
         INSERT INTO orders (reference, id_customer, id_user, state, total_discount, total_price, created_at, updated_at)
@@ -300,6 +299,56 @@ async function seedOrders(client) {
   } catch (error) {}
 }
 
+async function seedOrderLines(client) {
+  try {
+    await client.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
+    // Create the "users" table if it doesn't exist
+    const createTable = await client.query(`
+      CREATE TABLE IF NOT EXISTS order_lines (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        id_order VARCHAR(50) NOT NULL, 
+        id_product VARCHAR(50) NOT NULL,
+        product_designation VARCHAR(250) NOT NULL,
+        quantity INT NOT NULL,
+        product_price FLOAT NOT NULL,
+        discount FLOAT NOT NULL,
+        product_reference VARCHAR(50) NOT NULL,
+        created_at DATE NOT NULL DEFAULT CURRENT_DATE,
+        updated_at DATE NOT NULL DEFAULT CURRENT_DATE
+      );
+    `);
+
+    console.log(order_lines);
+    // Insert data into the "products" table
+    const insertedOrderLines = await Promise.all(
+      order_lines.map(async (line) => {
+        return client.query(
+          `
+        INSERT INTO order_lines (id_order, id_product, product_designation, quantity, product_price, discount, product_reference)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        ON CONFLICT (id) DO NOTHING;`,
+          [
+            line.id_order,
+            line.id_product,
+            line.product_designation,
+            line.quantity,
+            line.product_price,
+            line.discount,
+            line.product_reference,
+          ],
+        );
+      }),
+    );
+
+    console.log(`Seeded ${insertedOrderLines.length} order lines`);
+
+    return {
+      createTable,
+      order_lines: insertedOrderLines,
+    };
+  } catch (error) {}
+}
+
 async function main() {
   const client = await conn.connect();
 
@@ -307,7 +356,9 @@ async function main() {
   // await seedCustomers(client);
   // await seedInvoices(client);
   // await seedRevenue(client);
-  await seedProducts(client);
+  // await seedProducts(client);
+  // await seedOrders(client);
+  await seedOrderLines(client);
 
   await client.end();
 }
