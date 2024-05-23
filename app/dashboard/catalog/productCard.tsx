@@ -2,15 +2,31 @@
 
 import Image from 'next/image';
 import { Product } from '../../lib/definitions';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 interface ProductProps {
   product: Product;
+  sendDataToParent: (product: { id: string; quantity: number }) => void;
 }
 
-const ProductComponent: React.FC<ProductProps> = ({ product }) => {
-  const [order, setOrder] = useState({});
-  function handleAddToOrder() {}
+const ProductCard: React.FC<ProductProps> = ({ product, sendDataToParent }) => {
+  const [order, setOrder] = useState<{ id: string; quantity: number }[]>([]);
+  const [total, setTotal] = useState(0);
+
+  const quantityRef = useRef<HTMLInputElement>(null);
+
+  function handleAddToOrder() {
+    if (quantityRef.current) {
+      setTotal(0);
+      const quantity = parseInt(quantityRef.current.value);
+
+      const productToAdd: { id: string; quantity: number } = {
+        id: product.id,
+        quantity: quantity,
+      };
+      sendDataToParent(order);
+    }
+  }
 
   return (
     <div className="rounded-md p-5 text-left shadow-lg shadow-black/20 ">
@@ -48,11 +64,13 @@ const ProductComponent: React.FC<ProductProps> = ({ product }) => {
           type="number"
           className="appearance-auto w-50"
           name="product_quantity"
-          id="product_quantity"
+          id={`product_quantity_${product.id}`}
           step={product.mini}
           min={0}
           defaultValue={product.mini}
+          ref={quantityRef}
         />
+        <p>{product.price} €</p>
         <button
           type="submit"
           className="mt-5 rounded-md bg-sky-500 px-5 py-3 text-white hover:bg-sky-700"
@@ -65,4 +83,4 @@ const ProductComponent: React.FC<ProductProps> = ({ product }) => {
   );
 };
 
-export default ProductComponent;
+export default ProductCard;

@@ -95,6 +95,7 @@ export type Product = {
   pcb: number;
   mini: number;
   gencod: string;
+  price: number;
 };
 
 export type Order = {

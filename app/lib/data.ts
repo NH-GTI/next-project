@@ -8,6 +8,7 @@ import {
   LatestInvoiceRaw,
   User,
   Revenue,
+  Product,
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -255,7 +256,7 @@ export async function getUser(email: string) {
   }
 }
 
-export async function fetchProducts() {
+export async function fetchProducts(): Promise<Product[]> {
   const client = await fetchDataFromDB();
 
   try {
@@ -263,6 +264,22 @@ export async function fetchProducts() {
 		SELECT
 		  *
 		FROM products
+	  `);
+    client.release();
+
+    return data.rows;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch customer table.');
+  }
+}
+
+export async function sendOrder(products: Product) {
+  const client = await fetchDataFromDB();
+
+  try {
+    const data = await client.query(`
+		INSERT INTO order (reference, id_customer, id_user, state, total_discount, total_price)
 	  `);
     client.release();
 
