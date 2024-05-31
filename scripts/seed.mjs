@@ -13,8 +13,16 @@ if (!conn) {
   });
 }
 
-const { invoices, customers, revenue, users, products, orders, order_lines } =
-  await import('../app/lib/placeholder-data.js');
+const {
+  invoices,
+  customers,
+  revenue,
+  users,
+  products,
+  orders,
+  order_lines,
+  customer_product,
+} = await import('../app/lib/placeholder-data.js');
 
 const bcrypt = import('bcrypt');
 
@@ -349,6 +357,44 @@ async function seedOrderLines(client) {
   } catch (error) {}
 }
 
+async function seedCustomerProduct(client) {
+  // console.log(customer_product);
+  try {
+    await client.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
+    // Create the "customer_product" table if it doesn't exist
+    const createTable = await client.query(`
+      CREATE TABLE IF NOT EXISTS customer_product (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        id_customer VARCHAR(50) NOT NULL, 
+        id_product VARCHAR(50) NOT NULL
+      );
+    `);
+
+    // Insert data into the "customer_product" table
+    const insertedCustomerProduct = await Promise.all(
+      customer_product.map(async (line) => {
+        console.log(line);
+        return client.query(
+          `
+        INSERT INTO customer_product (id_customer, id_product)
+        VALUES ($1, $2)
+        ON CONFLICT (id) DO NOTHING;`,
+          [line.id_customer, line.id_product],
+        );
+      }),
+    );
+
+    console.log(
+      `Seeded ${insertedCustomerProduct.length} customer_product lines`,
+    );
+
+    return {
+      createTable,
+      customer_product: insertedCustomerProduct,
+    };
+  } catch (error) {}
+}
+
 async function main() {
   const client = await conn.connect();
 
@@ -358,7 +404,8 @@ async function main() {
   // await seedRevenue(client);
   // await seedProducts(client);
   // await seedOrders(client);
-  await seedOrderLines(client);
+  // await seedOrderLines(client);
+  await seedCustomerProduct(client);
 
   await client.end();
 }

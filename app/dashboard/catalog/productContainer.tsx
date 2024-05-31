@@ -1,58 +1,78 @@
 'use client';
 
-import { Product } from '@/app/lib/definitions';
+import { Product, CustomerProduct } from '@/app/lib/definitions';
 import ProductCard from './productCard';
 import { useState } from 'react';
+import Order from './orderContainer';
 
 interface ProductContainerProps {
   products: Product[];
+  customerProduct: CustomerProduct[];
 }
 
-const ProductContainer: React.FC<ProductContainerProps> = ({ products }) => {
+const ProductContainer: React.FC<ProductContainerProps> = ({
+  products,
+  customerProduct,
+}) => {
+  // if (typeof window !== 'undefined') {
+  const storedCustomerID = localStorage.getItem('customerID');
+  console.log(storedCustomerID);
+
+  const filteredCustomerProduct = customerProduct.filter(
+    (cProduct) => cProduct.id_customer === storedCustomerID,
+  );
+  // console.log(filteredCustomerProduct);
+
+  const filteredProducts: Product[] = products.filter((product: Product) => {
+    return filteredCustomerProduct.some((cProduct: CustomerProduct) => {
+      return cProduct.id_product === product.id;
+    });
+  });
+
+  console.log(filteredProducts);
+  // }
+
   const [orderProduct, setOrderProduct] = useState<
     { id: string; quantity: number }[]
   >([]);
 
-  const handleOrderProduct = (
-    productToAdd: {
-      id: string;
-      quantity: number;
-    }[],
-  ) => {
+  const handleOrderProduct = (productToAdd: {
+    id: string;
+    quantity: number;
+  }) => {
     setOrderProduct((prevData) => {
-      const updatedData = [...prevData];
+      const existingProductIndex = prevData.findIndex(
+        (p) => p.id === productToAdd.id,
+      );
 
-      orderProduct.forEach((newProduct) => {
-        const existingProductIndex = updatedData.findIndex(
-          (item) => item.id === newProduct.id,
-        );
-
-        if (existingProductIndex >= 0) {
-          updatedData[existingProductIndex] = {
-            ...updatedData[existingProductIndex],
-            quantity:
-              updatedData[existingProductIndex].quantity + newProduct.quantity,
-          };
-        } else {
-          updatedData.push(newProduct);
-        }
-      });
-
-      return updatedData;
+      if (existingProductIndex >= 0) {
+        // If the product exists, update its quantity
+        const updatedProducts = prevData.map((item, index) => {
+          if (index === existingProductIndex) {
+            return { ...item, quantity: item.quantity + productToAdd.quantity };
+          }
+          return item;
+        });
+        return updatedProducts;
+      } else {
+        // If the product doesn't exist, add it to the array
+        return [...prevData, productToAdd];
+      }
     });
   };
 
-  console.log(orderProduct);
-
   return (
     <>
-      {products.map((product) => (
-        <ProductCard
-          sendDataToParent={handleOrderProduct}
-          product={product}
-          key={product.id}
-        />
-      ))}
+      <Order products={orderProduct} />
+      <div className="flex flex-row flex-wrap justify-around gap-10">
+        {filteredProducts.map((product) => (
+          <ProductCard
+            sendDataToParent={handleOrderProduct}
+            product={product}
+            key={product.id}
+          />
+        ))}
+      </div>
     </>
   );
 };

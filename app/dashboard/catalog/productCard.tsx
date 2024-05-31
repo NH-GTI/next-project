@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { Product } from '../../lib/definitions';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 interface ProductProps {
   product: Product;
@@ -24,12 +24,13 @@ const ProductCard: React.FC<ProductProps> = ({ product, sendDataToParent }) => {
         id: product.id,
         quantity: quantity,
       };
-      sendDataToParent(order);
+
+      sendDataToParent(productToAdd);
     }
   }
 
   return (
-    <div className="rounded-md p-5 text-left shadow-lg shadow-black/20 ">
+    <div className="w-80 rounded-md p-5 text-left shadow-lg shadow-black/20">
       <div>
         <Image
           src="/products/default_image.jpg"
@@ -66,9 +67,10 @@ const ProductCard: React.FC<ProductProps> = ({ product, sendDataToParent }) => {
           name="product_quantity"
           id={`product_quantity_${product.id}`}
           step={product.mini}
-          min={0}
+          min={product.mini}
           defaultValue={product.mini}
           ref={quantityRef}
+          onKeyDown={(e) => e.preventDefault()}
         />
         <p>{product.price} €</p>
         <button

@@ -458,6 +458,69 @@ const order_lines = [
   },
 ];
 
+const customer_product = [
+  {
+    id_customer: '126eed9c-c90c-4ef6-a4a8-fcf7408d3c66',
+    id_product: '1356864b-3057-4ffc-ac0d-a363c6264adb',
+  },
+  {
+    id_customer: '126eed9c-c90c-4ef6-a4a8-fcf7408d3c66',
+    id_product: '23bb7801-9659-4403-86fa-60549d800a70',
+  },
+  {
+    id_customer: '126eed9c-c90c-4ef6-a4a8-fcf7408d3c66',
+    id_product: '442e1b72-b664-4ba0-bf7b-115c8b076dc8',
+  },
+  {
+    id_customer: '126eed9c-c90c-4ef6-a4a8-fcf7408d3c66',
+    id_product: '4f5f1438-2e28-44de-accd-0979f430b3db',
+  },
+  {
+    id_customer: '126eed9c-c90c-4ef6-a4a8-fcf7408d3c66',
+    id_product: '78217ac4-3067-4736-8a0b-38a7b8bef5da',
+  },
+  {
+    id_customer: '126eed9c-c90c-4ef6-a4a8-fcf7408d3c66',
+    id_product: '7aaa2828-195b-455d-8d82-98443f4dc982',
+  },
+  {
+    id_customer: '126eed9c-c90c-4ef6-a4a8-fcf7408d3c66',
+    id_product: 'b1c939a8-370a-44b8-9ca7-b4d9fc761c64',
+  },
+  {
+    id_customer: '126eed9c-c90c-4ef6-a4a8-fcf7408d3c66',
+    id_product: 'c7dbaf43-a6f5-427c-9a62-73398c7a64cc',
+  },
+  {
+    id_customer: '126eed9c-c90c-4ef6-a4a8-fcf7408d3c66',
+    id_product: 'cb3c1433-e36d-4530-83db-633687aa7bde',
+  },
+  {
+    id_customer: '126eed9c-c90c-4ef6-a4a8-fcf7408d3c66',
+    id_product: 'e61b049b-b489-42e2-97c5-b5019318c158',
+  },
+  {
+    id_customer: '13d07535-c59e-4157-a011-f8d2ef4e0cbb',
+    id_product: '7aaa2828-195b-455d-8d82-98443f4dc982',
+  },
+  {
+    id_customer: '13d07535-c59e-4157-a011-f8d2ef4e0cbb',
+    id_product: 'b1c939a8-370a-44b8-9ca7-b4d9fc761c64',
+  },
+  {
+    id_customer: '13d07535-c59e-4157-a011-f8d2ef4e0cbb',
+    id_product: 'c7dbaf43-a6f5-427c-9a62-73398c7a64cc',
+  },
+  {
+    id_customer: '13d07535-c59e-4157-a011-f8d2ef4e0cbb',
+    id_product: 'cb3c1433-e36d-4530-83db-633687aa7bde',
+  },
+  {
+    id_customer: '13d07535-c59e-4157-a011-f8d2ef4e0cbb',
+    id_product: 'e61b049b-b489-42e2-97c5-b5019318c158',
+  },
+];
+
 module.exports = {
   users,
   customers,
@@ -466,4 +529,5 @@ module.exports = {
   products,
   orders,
   order_lines,
+  customer_product,
 };

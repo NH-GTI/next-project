@@ -1,14 +1,11 @@
 import { fetchDataFromDB } from '../../scripts/connect.mjs';
 import { unstable_noStore as noStore } from 'next/cache';
 import {
-  CustomerField,
-  CustomersTableType,
-  InvoiceForm,
-  InvoicesTable,
-  LatestInvoiceRaw,
   User,
   Revenue,
   Product,
+  Customer,
+  CustomerProduct,
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -188,27 +185,6 @@ export async function fetchInvoiceById(id: string) {
   }
 }
 
-export async function fetchCustomers() {
-  const client = await fetchDataFromDB();
-  try {
-    const data = await client.query(`
-      SELECT
-        id,
-        name
-      FROM customers
-      ORDER BY name ASC
-    `);
-
-    const customers = data.rows;
-    client.release();
-
-    return customers;
-  } catch (err) {
-    console.error('Database Error:', err);
-    throw new Error('Failed to fetch all customers.');
-  }
-}
-
 export async function fetchFilteredCustomers(query: string) {
   noStore();
   const client = await fetchDataFromDB();
@@ -264,6 +240,42 @@ export async function fetchProducts(): Promise<Product[]> {
 		SELECT
 		  *
 		FROM products
+	  `);
+    client.release();
+
+    return data.rows;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch customer table.');
+  }
+}
+
+export async function fetchCustomers(): Promise<Customer[]> {
+  const client = await fetchDataFromDB();
+
+  try {
+    const data = await client.query(`
+		SELECT
+		  *
+		FROM customers
+	  `);
+    client.release();
+
+    return data.rows;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch customer table.');
+  }
+}
+
+export async function fetchCustomerProduct(): Promise<CustomerProduct[]> {
+  const client = await fetchDataFromDB();
+
+  try {
+    const data = await client.query(`
+		SELECT
+		  *
+		FROM customer_product
 	  `);
     client.release();
 

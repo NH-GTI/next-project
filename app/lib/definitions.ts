@@ -120,3 +120,9 @@ export type OrderLine = {
   discount: number;
   product_reference: string;
 };
+
+export type CustomerProduct = {
+  id: string;
+  id_customer: string;
+  id_product: string;
+};
