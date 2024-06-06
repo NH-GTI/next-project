@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { read, utils, writeFile } from 'xlsx';
 
 interface OrderProps {
-  products: { id: string; quantity: number }[];
+  products: { id: string; reference: string; quantity: number }[];
 }
 
 const OrderContainer: React.FC<OrderProps> = ({ products }) => {
@@ -20,22 +20,47 @@ const OrderContainer: React.FC<OrderProps> = ({ products }) => {
   }, [products]);
   return (
     <>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Quantité</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product) => (
-            <tr key={product.id}>
-              <td>{product.id}</td>
-              <td>{product.quantity}</td>
+      <div className="my-12">
+        <table className="w-full table-fixed border-collapse text-sm">
+          <thead>
+            <tr>
+              <th
+                className="border-b p-4 pb-3 pl-8 pt-0 text-left font-medium text-slate-400 dark:border-slate-600 dark:text-slate-200"
+                scope="col"
+              >
+                ID produit
+              </th>
+              <th
+                className="border-b p-4 pb-3 pt-0 text-left font-medium text-slate-400 dark:border-slate-600 dark:text-slate-200"
+                scope="col"
+              >
+                Référence
+              </th>
+              <th
+                className="border-b p-4 pb-3 pr-8 pt-0 text-left font-medium text-slate-400 dark:border-slate-600 dark:text-slate-200"
+                scope="col"
+              >
+                Quantité
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="bg-white dark:bg-slate-800">
+            {products.map((order) => (
+              <tr key={order.id}>
+                <td className="border-b border-slate-100 p-4 pl-8 text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                  {order.id}
+                </td>
+                <td className="border-b border-slate-100 p-4 pl-8 text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                  {order.reference}
+                </td>
+                <td className="border-b border-slate-100 p-4 pl-8 text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                  {order.quantity}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <input
         className="mt-5 rounded-md bg-sky-500 px-5 py-3 text-white hover:bg-sky-700"
         type="submit"

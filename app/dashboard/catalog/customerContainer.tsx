@@ -1,33 +1,22 @@
 'use client';
 
 import { Customer } from '@/app/lib/definitions';
-import { useState, useEffect } from 'react';
 
 interface CustomerContainerProps {
   customers: Customer[];
+  selectedCustomerID: string;
+  onCustomerChange: (customerID: string) => void;
 }
 
-const CustomerContainer: React.FC<CustomerContainerProps> = ({ customers }) => {
-  const [customerID, setCustomerID] = useState<string>('');
-
-  // Load customerID from localStorage when the component mounts
-  useEffect(() => {
-    const storedCustomerID = localStorage.getItem('customerID');
-    if (storedCustomerID) {
-      setCustomerID(storedCustomerID);
-    }
-  }, []);
-
-  // Save customerID to localStorage whenever it changes
-  useEffect(() => {
-    if (customerID) {
-      localStorage.setItem('customerID', customerID);
-    }
-  }, [customerID]);
+const CustomerContainer: React.FC<CustomerContainerProps> = ({
+  customers,
+  selectedCustomerID,
+  onCustomerChange,
+}) => {
+  // console.log(customers);
 
   const handleCustomerChoice = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setCustomerID(e.target.value);
-    location.reload();
+    onCustomerChange(e.target.value);
   };
 
   return (
@@ -35,9 +24,10 @@ const CustomerContainer: React.FC<CustomerContainerProps> = ({ customers }) => {
       <select
         name="customer_list"
         id="customer_list"
-        value={customerID}
+        value={selectedCustomerID} // Set the selected value
         onChange={handleCustomerChoice}
       >
+        <option value="">Select a customer</option> {/* Default option */}
         {customers.map((customer) => (
           <option key={customer.id} value={customer.id}>
             {customer.name}

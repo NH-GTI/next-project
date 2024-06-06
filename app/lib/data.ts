@@ -9,20 +9,33 @@ import {
 } from './definitions';
 import { formatCurrency } from './utils';
 
+export async function fetchUser(
+  email: FormDataEntryValue | null,
+  password: FormDataEntryValue | null,
+) {
+  const client = await fetchDataFromDB();
+
+  try {
+    console.log(email);
+    const user = await client.query<User>(
+      `SELECT * FROM users WHERE email=$1`,
+      [email],
+    );
+    console.log(user);
+
+    client.release();
+    return user.rows[0] as User;
+  } catch (error) {}
+}
+
 export async function fetchRevenue() {
   // Add noStore() here to prevent the response from being cached.
   // This is equivalent to in fetch(..., {cache: 'no-store'}).
   noStore();
   try {
-    // Artificially delay a response for demo purposes.
-    // Don't do this in production :)
-
-    // console.log('Fetching revenue data...');
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
     const client = await fetchDataFromDB();
     const data = await client.query<Revenue>(`SELECT * FROM revenue`);
 
-    // console.log('Data fetch completed after 3 seconds.');
     client.release();
 
     return data.rows;

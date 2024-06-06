@@ -90,6 +90,7 @@ export type InvoiceForm = {
 export type Product = {
   id: string;
   designation: string;
+  reference: string;
   family: number;
   brand: number;
   pcb: number;

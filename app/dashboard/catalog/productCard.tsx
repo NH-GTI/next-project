@@ -6,7 +6,11 @@ import { useState, useRef, useEffect } from 'react';
 
 interface ProductProps {
   product: Product;
-  sendDataToParent: (product: { id: string; quantity: number }) => void;
+  sendDataToParent: (product: {
+    id: string;
+    reference: string;
+    quantity: number;
+  }) => void;
 }
 
 const ProductCard: React.FC<ProductProps> = ({ product, sendDataToParent }) => {
@@ -20,10 +24,12 @@ const ProductCard: React.FC<ProductProps> = ({ product, sendDataToParent }) => {
       setTotal(0);
       const quantity = parseInt(quantityRef.current.value);
 
-      const productToAdd: { id: string; quantity: number } = {
-        id: product.id,
-        quantity: quantity,
-      };
+      const productToAdd: { id: string; reference: string; quantity: number } =
+        {
+          id: product.id,
+          reference: product.reference,
+          quantity: quantity,
+        };
 
       sendDataToParent(productToAdd);
     }
@@ -45,6 +51,9 @@ const ProductCard: React.FC<ProductProps> = ({ product, sendDataToParent }) => {
         <ul>
           <li>
             <span className="font-bold">Famille:</span> {product.family}
+          </li>
+          <li>
+            <span className="font-bold">Référence:</span> {product.reference}
           </li>
           <li>
             <span className="font-bold">Marque:</span> {product.brand}

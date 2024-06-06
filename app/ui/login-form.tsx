@@ -6,10 +6,20 @@ import {
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from './button';
+import { redirect } from 'next/navigation';
+import { login } from '../lib/auth';
 
 export default function LoginForm() {
+  // const session = await getSession();
   return (
-    <form className="space-y-3">
+    <form
+      className="space-y-3"
+      action={async (formData) => {
+        'use server';
+        await login(formData);
+        // redirect('/');
+      }}
+    >
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={`${lusitana.className} mb-3 text-2xl`}>
           Please log in to continue.
@@ -56,9 +66,7 @@ export default function LoginForm() {
           </div>
         </div>
         <LoginButton />
-        <div className="flex h-8 items-end space-x-1">
-          {/* Add form errors here */}
-        </div>
+        <div className="flex h-8 items-end space-x-1"></div>
       </div>
     </form>
   );

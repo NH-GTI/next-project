@@ -24,7 +24,7 @@ const {
   customer_product,
 } = await import('../app/lib/placeholder-data.js');
 
-const bcrypt = import('bcrypt');
+const bcrypt = await import('bcrypt');
 
 async function seedUsers(client) {
   try {
@@ -44,7 +44,7 @@ async function seedUsers(client) {
     // Insert data into the "users" table
     const insertedUsers = await Promise.all(
       users.map(async (user) => {
-        const hashedPassword = (await bcrypt).hash(user.password, 10);
+        const hashedPassword = await bcrypt.hash(user.password, 10);
         console.log(user.id, user.name, user.email, hashedPassword);
         return client.query(
           `
@@ -398,14 +398,14 @@ async function seedCustomerProduct(client) {
 async function main() {
   const client = await conn.connect();
 
-  // await seedUsers(client);
+  await seedUsers(client);
   // await seedCustomers(client);
   // await seedInvoices(client);
   // await seedRevenue(client);
   // await seedProducts(client);
   // await seedOrders(client);
   // await seedOrderLines(client);
-  await seedCustomerProduct(client);
+  // await seedCustomerProduct(client);
 
   await client.end();
 }
