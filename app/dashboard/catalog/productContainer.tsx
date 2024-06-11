@@ -11,13 +11,14 @@ interface ProductContainerProps {
 
 const ProductContainer: React.FC<ProductContainerProps> = ({ products }) => {
   const [orderProduct, setOrderProduct] = useState<
-    { id: string; reference: string; quantity: number }[]
+    { id: string; reference: string; quantity: number; price: number }[]
   >([]);
 
   const handleOrderProduct = (productToAdd: {
     id: string;
     reference: string;
     quantity: number;
+    price: number;
   }) => {
     setOrderProduct((prevData) => {
       const existingProductIndex = prevData.findIndex(
@@ -28,7 +29,11 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ products }) => {
         // If the product exists, update its quantity
         const updatedProducts = prevData.map((item, index) => {
           if (index === existingProductIndex) {
-            return { ...item, quantity: item.quantity + productToAdd.quantity };
+            return {
+              ...item,
+              quantity: item.quantity + productToAdd.quantity,
+              price: item.price + productToAdd.price,
+            };
           }
           return item;
         });

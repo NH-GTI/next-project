@@ -9,19 +9,14 @@ import {
 } from './definitions';
 import { formatCurrency } from './utils';
 
-export async function fetchUser(
-  email: FormDataEntryValue | null,
-  password: FormDataEntryValue | null,
-) {
+export async function fetchUser(email: FormDataEntryValue | null) {
   const client = await fetchDataFromDB();
 
   try {
-    console.log(email);
     const user = await client.query<User>(
       `SELECT * FROM users WHERE email=$1`,
       [email],
     );
-    console.log(user);
 
     client.release();
     return user.rows[0] as User;

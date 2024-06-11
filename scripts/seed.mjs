@@ -14,14 +14,13 @@ if (!conn) {
 }
 
 const {
-  invoices,
   customers,
-  revenue,
   users,
   products,
   orders,
   order_lines,
   customer_product,
+  centrals,
 } = await import('../app/lib/placeholder-data.js');
 
 const bcrypt = await import('bcrypt');
@@ -68,46 +67,30 @@ async function seedUsers(client) {
   }
 }
 
-async function seedInvoices(client) {
+async function seedCentral(client) {
   try {
-    await client.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
+    await client.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
 
-    // Create the "invoices" table if it doesn't exist
     const createTable = await client.query(`
-    CREATE TABLE IF NOT EXISTS invoices (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    customer_id UUID NOT NULL,
-    amount INT NOT NULL,
-    status VARCHAR(255) NOT NULL,
-    date DATE NOT NULL
-  );
-`);
+      CREATE TABLE IF NOT EXISTS central (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+      );
+    `);
 
-    console.log(`Created "invoices" table`);
-
-    // Insert data into the "invoices" table
-    const insertedInvoices = await Promise.all(
-      invoices.map((invoice) =>
+    // Insert data into the "central" table
+    const insertedCentral = await Promise.all(
+      centrals.map((central) =>
         client.query(
           `
-        INSERT INTO invoices (customer_id, amount, status, date)
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO central (id, name)
+        VALUES ($1, $2)
         ON CONFLICT (id) DO NOTHING;`,
-          [invoice.customer_id, invoice.amount, invoice.status, invoice.date],
+          [central.id, central.name],
         ),
       ),
     );
-
-    console.log(`Seeded ${insertedInvoices.length} invoices`);
-
-    return {
-      createTable,
-      invoices: insertedInvoices,
-    };
-  } catch (error) {
-    console.error('Error seeding invoices:', error);
-    throw error;
-  }
+  } catch (error) {}
 }
 
 async function seedCustomers(client) {
@@ -147,43 +130,6 @@ async function seedCustomers(client) {
     };
   } catch (error) {
     console.error('Error seeding customers:', error);
-    throw error;
-  }
-}
-
-async function seedRevenue(client) {
-  try {
-    // Create the "revenue" table if it doesn't exist
-    const createTable = await client.query(`
-      CREATE TABLE IF NOT EXISTS revenue (
-        month VARCHAR(4) NOT NULL UNIQUE,
-        revenue INT NOT NULL
-      );
-    `);
-
-    console.log(`Created "revenue" table`);
-
-    // Insert data into the "revenue" table
-    const insertedRevenue = await Promise.all(
-      revenue.map((rev) =>
-        client.query(
-          `
-        INSERT INTO revenue (month, revenue)
-        VALUES ($1, $2)
-        ON CONFLICT (month) DO NOTHING`,
-          [rev.month, rev.revenue],
-        ),
-      ),
-    );
-
-    console.log(`Seeded ${insertedRevenue.length} revenue`);
-
-    return {
-      createTable,
-      revenue: insertedRevenue,
-    };
-  } catch (error) {
-    console.error('Error seeding revenue:', error);
     throw error;
   }
 }
@@ -398,10 +344,9 @@ async function seedCustomerProduct(client) {
 async function main() {
   const client = await conn.connect();
 
-  await seedUsers(client);
+  await seedCentral(client);
+  // await seedUsers(client);
   // await seedCustomers(client);
-  // await seedInvoices(client);
-  // await seedRevenue(client);
   // await seedProducts(client);
   // await seedOrders(client);
   // await seedOrderLines(client);

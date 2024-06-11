@@ -521,6 +521,18 @@ const customer_product = [
   },
 ];
 
+const centrals = [
+  {
+    name: 'General',
+  },
+  {
+    name: 'Autobacs',
+  },
+  {
+    name: 'Roady 2024',
+  },
+];
+
 module.exports = {
   users,
   customers,
@@ -530,4 +542,5 @@ module.exports = {
   orders,
   order_lines,
   customer_product,
+  centrals,
 };

@@ -1,10 +1,15 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { read, utils, writeFile } from 'xlsx';
 
 interface OrderProps {
-  products: { id: string; reference: string; quantity: number }[];
+  products: {
+    id: string;
+    reference: string;
+    quantity: number;
+    price: number;
+  }[];
 }
 
 const OrderContainer: React.FC<OrderProps> = ({ products }) => {
@@ -42,6 +47,12 @@ const OrderContainer: React.FC<OrderProps> = ({ products }) => {
               >
                 Quantité
               </th>
+              <th
+                className="border-b p-4 pb-3 pr-8 pt-0 text-left font-medium text-slate-400 dark:border-slate-600 dark:text-slate-200"
+                scope="col"
+              >
+                Total
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-slate-800">
@@ -55,6 +66,9 @@ const OrderContainer: React.FC<OrderProps> = ({ products }) => {
                 </td>
                 <td className="border-b border-slate-100 p-4 pl-8 text-slate-500 dark:border-slate-700 dark:text-slate-400">
                   {order.quantity}
+                </td>
+                <td className="border-b border-slate-100 p-4 pl-8 text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                  {order.price} €
                 </td>
               </tr>
             ))}

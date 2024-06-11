@@ -1,16 +1,17 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { fetchUser } from './data';
+import { redirect } from 'next/navigation';
 
-const secretKey = 'secret';
+const secretKey = process.env.SECRET_KEY || 'default_secret';
 const key = new TextEncoder().encode(secretKey);
 
 export async function encrypt(payload: any) {
-  return await new SignJWT(payload)
+  return new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('10 sec from now')
+    .setExpirationTime('10m') // Expiration time in minutes
     .sign(key);
 }
 
@@ -22,30 +23,67 @@ export async function decrypt(input: string): Promise<any> {
 }
 
 export async function login(formData: FormData) {
-  // Verify credentials && get the user
-  const bcrypt = await import('bcrypt');
-  const password = formData.get('password')?.toString();
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const userFromDB = await fetchUser(
-    formData.get('email'),
-    formData.get('password'),
-  );
+  try {
+    const bcrypt = await import('bcrypt');
+    const email = formData.get('email')?.toString();
+    const password = formData.get('password')?.toString() || '';
 
-  console.log(userFromDB);
-  //   console.log(formData.get('email'));
-  //   console.log(formData.get('password'));
+    if (!email || !password) {
+      throw new Error('Email and password are required');
+    }
 
-  //   // Create the session
-  //   const expires = new Date(Date.now() + 10 * 1000);
-  //   const session = await encrypt({ userFromDB, expires });
+    const userFromDB = await fetchUser(email);
+    if (!userFromDB) {
+      throw new Error('User not found');
+    }
 
-  //   // Save the session in a cookie
-  //   cookies().set('session', session, { expires, httpOnly: true });
+    const passwordsMatch = await bcrypt.compare(password, userFromDB.password);
+    if (!passwordsMatch) {
+      throw new Error('Invalid credentials');
+    }
+
+    // Create the session
+    const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const session = await encrypt({ user: userFromDB, expires });
+
+    // Save the session in a cookie
+    cookies().set('session', session, { expires, httpOnly: true });
+
+    // Return the redirection response
+    return NextResponse.redirect(
+      new URL('/', process.env.BASE_URL || 'http://localhost:3000'),
+    ); // Ensure absolute URL
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error.message);
+    } else {
+      console.log('Unknown error');
+    }
+
+    // Return the redirection response in case of an error
+    return NextResponse.redirect(
+      new URL('/login', process.env.BASE_URL || 'http://localhost:3000'),
+    ); // Ensure absolute URL
+  }
+}
+
+export async function saveCustomerCode(session: any, clientCode: string) {
+  session.customerCode = clientCode;
+  const encryptedSession = await encrypt(session); // Ensure you have an encrypt function
+
+  // Update session cookie
+  cookies().set('session', encryptedSession, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+  });
 }
 
 export async function logout() {
   // Destroy the session
   cookies().set('session', '', { expires: new Date(0) });
+  return NextResponse.redirect(
+    new URL('/login', process.env.BASE_URL || 'http://localhost:3000'),
+  ); // Ensure absolute URL
 }
 
 export async function getSession() {
@@ -60,13 +98,11 @@ export async function updateSession(request: NextRequest) {
 
   // Refresh the session so it doesn't expire
   const parsed = await decrypt(session);
-  parsed.expires = new Date(Date.now() + 10 * 1000);
+  parsed.expires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
   const res = NextResponse.next();
-  res.cookies.set({
-    name: 'session',
-    value: await encrypt(parsed),
-    httpOnly: true,
+  res.cookies.set('session', await encrypt(parsed), {
     expires: parsed.expires,
+    httpOnly: true,
   });
   return res;
 }

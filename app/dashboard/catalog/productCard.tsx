@@ -10,11 +10,14 @@ interface ProductProps {
     id: string;
     reference: string;
     quantity: number;
+    price: number;
   }) => void;
 }
 
 const ProductCard: React.FC<ProductProps> = ({ product, sendDataToParent }) => {
-  const [order, setOrder] = useState<{ id: string; quantity: number }[]>([]);
+  const [order, setOrder] = useState<
+    { id: string; reference: String; quantity: number; price: number }[]
+  >([]);
   const [total, setTotal] = useState(0);
 
   const quantityRef = useRef<HTMLInputElement>(null);
@@ -24,12 +27,17 @@ const ProductCard: React.FC<ProductProps> = ({ product, sendDataToParent }) => {
       setTotal(0);
       const quantity = parseInt(quantityRef.current.value);
 
-      const productToAdd: { id: string; reference: string; quantity: number } =
-        {
-          id: product.id,
-          reference: product.reference,
-          quantity: quantity,
-        };
+      const productToAdd: {
+        id: string;
+        reference: string;
+        quantity: number;
+        price: number;
+      } = {
+        id: product.id,
+        reference: product.reference,
+        quantity: quantity,
+        price: product.price * quantity,
+      };
 
       sendDataToParent(productToAdd);
     }
