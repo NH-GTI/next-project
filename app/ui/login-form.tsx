@@ -18,8 +18,6 @@ export default function LoginForm() {
     const formData = new FormData();
     formData.append('email', email);
     formData.append('password', password);
-    console.log(email);
-    console.log(password);
 
     const response = await fetch('/api/auth/login', {
       method: 'POST',

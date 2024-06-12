@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { getServerSession } from 'next-auth/next';
+// import { options } from './app/api/auth/[...nextauth]/options';
 
 const secret = process.env.NEXTAUTH_SECRET || 'default_secret';
 
 export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request, secret });
+  // const session = await getServerSession({ req: request, ...options });
   const url = request.nextUrl.clone();
-  console.log(token);
 
   // Paths to exclude from middleware logic
   const excludedPaths = [
@@ -20,14 +22,13 @@ export async function middleware(request: NextRequest) {
   if (excludedPaths.some((path) => url.pathname.startsWith(path))) {
     return NextResponse.next();
   }
-  // console.log(token);
+  console.log(token);
 
   if (!token) {
     return NextResponse.redirect(
       new URL('/login', process.env.BASE_URL || 'http://localhost:3000'),
     );
   }
-  // console.log(token.customerChosen);
 
   // Additional check for whether a customer has been chosen
   if (!token.customerCode) {

@@ -67,12 +67,12 @@ export async function login(formData: FormData) {
   }
 }
 
-export async function saveCustomerCode(session: any, clientCode: string) {
-  session.customerCode = clientCode;
-  const encryptedSession = await encrypt(session); // Ensure you have an encrypt function
+export async function saveCustomerCode(customerCode: string) {
+  // session.customerCode = clientCode;
+  const encryptedSession = await encrypt({ customerCode }); // Ensure you have an encrypt function
 
   // Update session cookie
-  cookies().set('session', encryptedSession, {
+  cookies().set('customerCode', encryptedSession, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
   });
@@ -86,8 +86,8 @@ export async function logout() {
   ); // Ensure absolute URL
 }
 
-export async function getSession() {
-  const session = cookies().get('session')?.value;
+export async function getSession(cookie: string) {
+  const session = cookies().get(cookie)?.value;
   if (!session) return null;
   return await decrypt(session);
 }
