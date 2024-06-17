@@ -7,22 +7,9 @@ export default function Page() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const response = await fetch('/customer/api', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ customerCode }),
-    });
-    console.log(JSON.stringify({ customerCode }));
 
-    if (response.ok) {
-      // Handle success, maybe redirect to another page
-      alert('Client code saved successfully');
-    } else {
-      // Handle error
-      alert('Failed to save client code');
-    }
+    document.cookie = 'customer-code=' + customerCode + ';path=/dashboard';
+    window.location.href = '/dashboard/catalog';
   };
 
   return (

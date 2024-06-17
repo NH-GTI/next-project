@@ -4,6 +4,7 @@ import {
   fetchProducts,
   fetchCustomerProduct,
 } from '@/app/lib/data';
+import TopNav from '@/app/ui/dashboard/topnav';
 
 const ProductsPage = async () => {
   const initialProducts = await fetchProducts();
@@ -11,11 +12,14 @@ const ProductsPage = async () => {
   const customerProduct = await fetchCustomerProduct();
 
   return (
-    <ClientSideComponent
-      initialProducts={initialProducts}
-      initialCustomers={initialCustomers}
-      customerProduct={customerProduct}
-    />
+    <>
+      <TopNav />
+      <ClientSideComponent
+        initialProducts={initialProducts}
+        initialCustomers={initialCustomers}
+        customerProduct={customerProduct}
+      />
+    </>
   );
 };
 

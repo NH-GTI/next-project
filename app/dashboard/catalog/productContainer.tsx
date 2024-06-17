@@ -13,7 +13,6 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ products }) => {
   const [orderProduct, setOrderProduct] = useState<
     { id: string; reference: string; quantity: number; price: number }[]
   >([]);
-
   const handleOrderProduct = (productToAdd: {
     id: string;
     reference: string;

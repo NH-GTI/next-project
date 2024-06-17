@@ -9,12 +9,9 @@ import { signOut } from 'next-auth/react';
 export default function SideNav() {
   const handleSignOut = async () => {
     try {
-      // Call the API route to handle logout on the server
-      await fetch('/api/logout', {
-        method: 'POST',
-      });
-
       // Sign out the user on the client-side using next-auth
+      document.cookie =
+        'customer-code= ; path=/dashboard; expires=Thu, 01 Jan 1970 00:00:00 UTC';
       signOut();
     } catch (error) {
       console.error('Error logging out:', error);

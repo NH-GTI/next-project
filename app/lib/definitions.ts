@@ -14,6 +14,7 @@ export type Customer = {
   name: string;
   email: string;
   image_url: string;
+  code: string;
 };
 
 export type Invoice = {
@@ -124,6 +125,6 @@ export type OrderLine = {
 
 export type CustomerProduct = {
   id: string;
-  id_customer: string;
+  customer_code: string;
   id_product: string;
 };

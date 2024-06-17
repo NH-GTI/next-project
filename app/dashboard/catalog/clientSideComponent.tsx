@@ -4,8 +4,8 @@ import { useState } from 'react';
 import CustomerContainer from './customerContainer';
 import ProductContainer from './productContainer';
 import SearchBar from '@/app/ui/dashboard/searchbar';
-import Order from './orderContainer';
 import { Product, Customer, CustomerProduct } from '@/app/lib/definitions';
+import { getCookie } from 'cookies-next';
 
 interface ClientSideComponentProps {
   initialProducts: Product[];
@@ -18,17 +18,24 @@ const ClientSideComponent: React.FC<ClientSideComponentProps> = ({
   initialCustomers,
   customerProduct,
 }) => {
+  const customerCode: string = getCookie('customer-code') as string;
   const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [selectedCustomerID, setSelectedCustomerID] = useState<string>('');
+  const [selectedCustomerID, setSelectedCustomerID] =
+    useState<string>(customerCode);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [productsByCustomer, setProductsByCustomer] =
     useState<Product[]>(initialProducts);
+
+  const selectedCustomer = initialCustomers.filter(
+    (item) => item.code === selectedCustomerID,
+  );
+  console.log(selectedCustomer);
 
   const handleCustomerChange = (customerID: string) => {
     setSelectedCustomerID(customerID);
     // Filter products based on selected customer
     const filteredProducts = customerProduct
-      .filter((item) => item.id_customer === selectedCustomerID)
+      .filter((item) => item.customer_code === selectedCustomerID)
       .map((item) => item.id_product);
 
     const productList = initialProducts.filter((item) =>
@@ -50,8 +57,7 @@ const ClientSideComponent: React.FC<ClientSideComponentProps> = ({
   return (
     <>
       <CustomerContainer
-        customers={initialCustomers}
-        selectedCustomerID={selectedCustomerID}
+        selectedCustomer={selectedCustomer}
         onCustomerChange={handleCustomerChange}
       />
       <SearchBar value={searchTerm} onChange={handleSearch} />

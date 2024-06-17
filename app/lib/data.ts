@@ -276,6 +276,28 @@ export async function fetchCustomers(): Promise<Customer[]> {
   }
 }
 
+export async function fetchCustomerById(code: string): Promise<Customer[]> {
+  const client = await fetchDataFromDB();
+
+  try {
+    const data = await client.query(
+      `
+		SELECT
+		  *
+		FROM customers
+    Where code = $1
+	  `,
+      [code],
+    );
+    client.release();
+
+    return data.rows;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch customer table.');
+  }
+}
+
 export async function fetchCustomerProduct(): Promise<CustomerProduct[]> {
   const client = await fetchDataFromDB();
 

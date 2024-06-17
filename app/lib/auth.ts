@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { NextResponse, NextRequest } from 'next/server';
 import { fetchUser } from './data';
 import { redirect } from 'next/navigation';
+import bcrypt from 'bcryptjs';
 
 const secretKey = process.env.SECRET_KEY || 'default_secret';
 const key = new TextEncoder().encode(secretKey);
@@ -24,7 +25,6 @@ export async function decrypt(input: string): Promise<any> {
 
 export async function login(formData: FormData) {
   try {
-    const bcrypt = await import('bcrypt');
     const email = formData.get('email')?.toString();
     const password = formData.get('password')?.toString() || '';
 
@@ -43,7 +43,7 @@ export async function login(formData: FormData) {
     }
 
     // Create the session
-    const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const expires = new Date(Date.now() + 10 * 60 * 10000); // 10 minutes
     const session = await encrypt({ user: userFromDB, expires });
 
     // Save the session in a cookie
@@ -89,7 +89,7 @@ export async function logout() {
 export async function getSession(cookie: string) {
   const session = cookies().get(cookie)?.value;
   if (!session) return null;
-  return await decrypt(session);
+  return cookie;
 }
 
 export async function updateSession(request: NextRequest) {
