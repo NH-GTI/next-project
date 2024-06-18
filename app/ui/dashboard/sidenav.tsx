@@ -12,6 +12,8 @@ export default function SideNav() {
       // Sign out the user on the client-side using next-auth
       document.cookie =
         'customer-code= ; path=/dashboard; expires=Thu, 01 Jan 1970 00:00:00 UTC';
+      document.cookie =
+        'order-code= ; path=/dashboard; expires=Thu, 01 Jan 1970 00:00:00 UTC';
       signOut();
     } catch (error) {
       console.error('Error logging out:', error);

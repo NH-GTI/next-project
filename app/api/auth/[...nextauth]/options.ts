@@ -11,7 +11,7 @@ export const options: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        console.log('NEXTAUTH_SECRET:', process.env.NEXTAUTH_SECRET);
+        // console.log('NEXTAUTH_SECRET:', process.env.NEXTAUTH_SECRET);
         const bcrypt = await import('bcrypt');
         const email = credentials?.email as string;
         const password = credentials?.password as string;

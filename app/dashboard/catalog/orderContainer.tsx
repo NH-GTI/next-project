@@ -1,5 +1,6 @@
 'use client';
 
+import { useCustomer } from '@/app/components/OrderInfosProvider';
 import { useCallback, useState } from 'react';
 import { read, utils, writeFile } from 'xlsx';
 
@@ -13,10 +14,18 @@ interface OrderProps {
 }
 
 const OrderContainer: React.FC<OrderProps> = ({ products }) => {
+  const customerCode = useCustomer();
+  // products.customerCode = customerCode;
+  const fullProducts = products.map((product) => ({
+    ...product,
+    customerCode: customerCode.customerCode,
+  }));
+  console.log('Full products : ', fullProducts);
+
   /* get state data and export to XLSX */
   const exportFile = useCallback(() => {
     /* generate worksheet from state */
-    const ws = utils.json_to_sheet(products);
+    const ws = utils.json_to_sheet([products, customerCode]);
     /* create workbook and append worksheet */
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, 'Data');

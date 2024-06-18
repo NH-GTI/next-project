@@ -1,24 +1,19 @@
 'use client';
 
+import { useCustomer } from '@/app/components/OrderInfosProvider';
 import { Customer } from '@/app/lib/definitions';
 
-interface CustomerContainerProps {
-  selectedCustomer: Customer[];
-  onCustomerChange: (customerID: string) => void;
-}
-
-const CustomerContainer: React.FC<CustomerContainerProps> = ({
-  selectedCustomer,
-  onCustomerChange,
-}) => {
-  const handleCustomerChoice = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onCustomerChange(e.target.value);
-  };
+const CustomerContainer: React.FC = () => {
+  const customerCode = useCustomer();
+  console.log(
+    'Customer Code From customerContainer',
+    customerCode.customerCode,
+  );
 
   return (
     <div>
       <h1 className="text-xl">
-        <span key={selectedCustomer[0].id}>{selectedCustomer[0].name}</span>
+        <span key={customerCode.customerCode}></span>
       </h1>
     </div>
   );

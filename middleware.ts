@@ -1,51 +1,43 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getToken } from 'next-auth/jwt';
+// import { NextRequest, NextResponse } from 'next/server';
+// import { getToken } from 'next-auth/jwt';
 
-const secret = process.env.NEXTAUTH_SECRET || 'default_secret';
+export { default } from 'next-auth/middleware';
 
-export async function middleware(request: NextRequest) {
-  const response = NextResponse.next();
-  const token = await getToken({ req: request, secret });
-  const url = request.nextUrl.clone();
-  // const allCookies = request.cookies;
-  response.cookies.set('customer-code', '123456', {
-    path: '/',
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'development',
-  });
-  const cookieCustomerCode = request.cookies.get('customer-code');
+// const secret = process.env.NEXTAUTH_SECRET || 'default_secret';
 
-  // // Paths to exclude from middleware logic
-  const excludedPaths = [
-    '/login',
-    '/_next',
-    '/static',
-    '/favicon.ico',
-    '/dashboard/customers',
-  ];
+// export async function middleware(request: NextRequest) {
+//   const response = NextResponse.next();
+//   const token = await getToken({ req: request, secret });
+//   const url = request.nextUrl.clone();
+//   // const allCookies = request.cookies;
 
-  if (excludedPaths.some((path) => url.pathname.startsWith(path))) {
-    return NextResponse.next();
-  }
+//   const cookieCustomerCode = request.cookies.get('customer-code');
 
-  if (!token) {
-    return NextResponse.redirect(
-      new URL('/login', process.env.BASE_URL || 'http://localhost:3000'),
-    );
-  }
+//   // // Paths to exclude from middleware logic
+//   // const excludedPaths = ['/login', '/_next', '/static', '/favicon.ico'];
 
-  // // Additional check for whether a customer has been chosen
-  if (!cookieCustomerCode) {
-    return NextResponse.redirect(
-      new URL(
-        '/dashboard/customers',
-        process.env.BASE_URL || 'http://localhost:3000',
-      ),
-    );
-  }
+//   // if (excludedPaths.some((path) => url.pathname.startsWith(path))) {
+//   //   return NextResponse.next();
+//   // }
 
-  return NextResponse.next();
-}
+//   // if (!token) {
+//   //   return NextResponse.redirect(
+//   //     new URL('/login', process.env.BASE_URL || 'http://localhost:3000'),
+//   //   );
+//   // }
+
+//   // // // Additional check for whether a customer has been chosen
+//   // if (!cookieCustomerCode) {
+//   //   return NextResponse.redirect(
+//   //     new URL(
+//   //       '/dashboard/customers',
+//   //       process.env.BASE_URL || 'http://localhost:3000',
+//   //     ),
+//   //   );
+//   // }
+
+//   return NextResponse.next();
+// }
 
 export const config = {
   matcher: ['/dashboard/:path*'],

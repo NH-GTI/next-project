@@ -232,7 +232,9 @@ export async function fetchFilteredCustomers(query: string) {
 export async function getUser(email: string) {
   const client = await fetchDataFromDB();
   try {
-    const user = await client.query(`SELECT * FROM users WHERE email=${email}`);
+    const user = await client.query(`SELECT * FROM users WHERE email = $1`, [
+      email,
+    ]);
     return user.rows[0] as User;
   } catch (error) {
     console.error('Failed to fetch user:', error);
