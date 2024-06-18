@@ -14,6 +14,7 @@ export type Customer = {
   name: string;
   email: string;
   image_url: string;
+  code: string;
 };
 
 export type Invoice = {
@@ -90,11 +91,13 @@ export type InvoiceForm = {
 export type Product = {
   id: string;
   designation: string;
+  reference: string;
   family: number;
   brand: number;
   pcb: number;
   mini: number;
   gencod: string;
+  price: number;
 };
 
 export type Order = {
@@ -118,4 +121,10 @@ export type OrderLine = {
   product_price: number;
   discount: number;
   product_reference: string;
+};
+
+export type CustomerProduct = {
+  id: string;
+  customer_code: string;
+  id_product: string;
 };
