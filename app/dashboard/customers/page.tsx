@@ -41,6 +41,16 @@ export default function Page() {
           name="submit_client_code"
           id="submit_client_code"
         />
+        <p className="mt-5 text-sm">
+          Vous souhaitez consulter la liste des clients ? Cliquez sur{' '}
+          <a
+            className="text-cyan-600"
+            href="/customers/liste_des_clients.xlsx"
+            download="liste_des_clients"
+          >
+            télécharger la liste des clients
+          </a>
+        </p>
       </form>
     </>
   );

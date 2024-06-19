@@ -250,6 +250,7 @@ export async function fetchProducts(): Promise<Product[]> {
 		SELECT
 		  *
 		FROM products
+    LIMIT 500
 	  `);
     client.release();
 
@@ -278,7 +279,7 @@ export async function fetchCustomers(): Promise<Customer[]> {
   }
 }
 
-export async function fetchCustomerById(code: string): Promise<Customer[]> {
+export async function fetchCustomerById(code: string): Promise<Customer> {
   const client = await fetchDataFromDB();
 
   try {
@@ -292,8 +293,9 @@ export async function fetchCustomerById(code: string): Promise<Customer[]> {
       [code],
     );
     client.release();
+    console.log(data.rows[0]);
 
-    return data.rows;
+    return data.rows[0];
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch customer table.');

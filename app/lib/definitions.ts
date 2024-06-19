@@ -13,8 +13,9 @@ export type Customer = {
   id: string;
   name: string;
   email: string;
-  image_url: string;
+  code_tarif: string;
   code: string;
+  city: string;
 };
 
 export type Invoice = {
@@ -98,6 +99,7 @@ export type Product = {
   mini: number;
   gencod: string;
   price: number;
+  product_price: number;
 };
 
 export type Order = {
@@ -125,6 +127,7 @@ export type OrderLine = {
 
 export type CustomerProduct = {
   id: string;
-  customer_code: string;
-  id_product: string;
+  code_tarif: string;
+  product_ref: string;
+  product_price: number;
 };

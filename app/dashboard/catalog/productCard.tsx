@@ -7,7 +7,6 @@ import { useState, useRef, useEffect } from 'react';
 interface ProductProps {
   product: Product;
   sendDataToParent: (product: {
-    id: string;
     reference: string;
     quantity: number;
     price: number;
@@ -16,7 +15,7 @@ interface ProductProps {
 
 const ProductCard: React.FC<ProductProps> = ({ product, sendDataToParent }) => {
   const [order, setOrder] = useState<
-    { id: string; reference: String; quantity: number; price: number }[]
+    { reference: String; quantity: number; price: number }[]
   >([]);
   const [total, setTotal] = useState(0);
 
@@ -28,12 +27,10 @@ const ProductCard: React.FC<ProductProps> = ({ product, sendDataToParent }) => {
       const quantity = parseInt(quantityRef.current.value);
 
       const productToAdd: {
-        id: string;
         reference: string;
         quantity: number;
         price: number;
       } = {
-        id: product.id,
         reference: product.reference,
         quantity: quantity,
         price: product.price * quantity,
@@ -44,7 +41,7 @@ const ProductCard: React.FC<ProductProps> = ({ product, sendDataToParent }) => {
   }
 
   return (
-    <div className="w-80 rounded-md p-5 text-left shadow-lg shadow-black/20">
+    <div className="my-10 w-80 rounded-md p-5 text-left shadow-lg shadow-black/20">
       <div>
         <Image
           src="/products/default_image.jpg"
@@ -80,7 +77,7 @@ const ProductCard: React.FC<ProductProps> = ({ product, sendDataToParent }) => {
       <div className="text-center">
         <input
           type="number"
-          className="appearance-auto w-50"
+          className="appearance-auto w-50 my-5"
           name="product_quantity"
           id={`product_quantity_${product.id}`}
           step={product.mini}
@@ -89,7 +86,7 @@ const ProductCard: React.FC<ProductProps> = ({ product, sendDataToParent }) => {
           ref={quantityRef}
           onKeyDown={(e) => e.preventDefault()}
         />
-        <p>{product.price} €</p>
+        <p className="text-xl">{product.product_price} €</p>
         <button
           type="submit"
           className="mt-5 rounded-md bg-sky-500 px-5 py-3 text-white hover:bg-sky-700"

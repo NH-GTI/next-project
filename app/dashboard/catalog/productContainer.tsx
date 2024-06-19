@@ -11,17 +11,17 @@ interface ProductContainerProps {
 
 const ProductContainer: React.FC<ProductContainerProps> = ({ products }) => {
   const [orderProduct, setOrderProduct] = useState<
-    { id: string; reference: string; quantity: number; price: number }[]
+    { reference: string; quantity: number; price: number }[]
   >([]);
+  // console.log('Produits product container : ', products);
   const handleOrderProduct = (productToAdd: {
-    id: string;
     reference: string;
     quantity: number;
     price: number;
   }) => {
     setOrderProduct((prevData) => {
       const existingProductIndex = prevData.findIndex(
-        (p) => p.id === productToAdd.id,
+        (p) => p.reference === productToAdd.reference,
       );
 
       if (existingProductIndex >= 0) {

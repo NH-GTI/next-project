@@ -9,14 +9,14 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession();
+  // const session = await getServerSession();
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
-        <nav>
+        {/* <nav>
           {!!session && <Logout />}
           {!session && <Link href="/login">Login</Link>}
-        </nav>
+        </nav> */}
         {children}
       </body>
     </html>

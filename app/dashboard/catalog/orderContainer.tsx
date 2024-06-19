@@ -1,12 +1,11 @@
 'use client';
 
-import { useCustomer } from '@/app/components/OrderInfosProvider';
+import { useOrderInfos } from '@/app/components/OrderInfosProvider';
 import { useCallback, useState } from 'react';
 import { read, utils, writeFile } from 'xlsx';
 
 interface OrderProps {
   products: {
-    id: string;
     reference: string;
     quantity: number;
     price: number;
@@ -14,18 +13,20 @@ interface OrderProps {
 }
 
 const OrderContainer: React.FC<OrderProps> = ({ products }) => {
-  const customerCode = useCustomer();
-  // products.customerCode = customerCode;
+  const orderInfos = useOrderInfos();
+
   const fullProducts = products.map((product) => ({
+    customerCode: orderInfos.customerCode,
     ...product,
-    customerCode: customerCode.customerCode,
+    orderID: orderInfos.orderID,
+    sellType: 'PE',
+    discount: 0,
   }));
-  console.log('Full products : ', fullProducts);
 
   /* get state data and export to XLSX */
   const exportFile = useCallback(() => {
     /* generate worksheet from state */
-    const ws = utils.json_to_sheet([products, customerCode]);
+    const ws = utils.json_to_sheet(fullProducts);
     /* create workbook and append worksheet */
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, 'Data');
@@ -38,12 +39,6 @@ const OrderContainer: React.FC<OrderProps> = ({ products }) => {
         <table className="w-full table-fixed border-collapse text-sm">
           <thead>
             <tr>
-              <th
-                className="border-b p-4 pb-3 pl-8 pt-0 text-left font-medium text-slate-400 dark:border-slate-600 dark:text-slate-200"
-                scope="col"
-              >
-                ID produit
-              </th>
               <th
                 className="border-b p-4 pb-3 pt-0 text-left font-medium text-slate-400 dark:border-slate-600 dark:text-slate-200"
                 scope="col"
@@ -66,10 +61,7 @@ const OrderContainer: React.FC<OrderProps> = ({ products }) => {
           </thead>
           <tbody className="bg-white dark:bg-slate-800">
             {products.map((order) => (
-              <tr key={order.id}>
-                <td className="border-b border-slate-100 p-4 pl-8 text-slate-500 dark:border-slate-700 dark:text-slate-400">
-                  {order.id}
-                </td>
+              <tr key={order.reference}>
                 <td className="border-b border-slate-100 p-4 pl-8 text-slate-500 dark:border-slate-700 dark:text-slate-400">
                   {order.reference}
                 </td>

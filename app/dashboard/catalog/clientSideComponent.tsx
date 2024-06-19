@@ -1,43 +1,79 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CustomerContainer from './customerContainer';
 import ProductContainer from './productContainer';
 import SearchBar from '@/app/ui/dashboard/searchbar';
-import { Product, Customer } from '@/app/lib/definitions';
-import { getCookie } from 'cookies-next';
-import { CustomerProvider } from '@/app/components/OrderInfosProvider';
+import { Customer, Product } from '@/app/lib/definitions';
+import { OrderInfosProvider } from '@/app/components/OrderInfosProvider';
 
 interface ClientSideComponentProps {
   initialProducts: Product[];
+  customer: Customer;
 }
-
-// const cookieCustomerCode: string = getCookie('customer-code') as string;
 
 const ClientSideComponent: React.FC<ClientSideComponentProps> = ({
   initialProducts,
+  customer,
 }) => {
   const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [productsByCustomer, setProductsByCustomer] =
-    useState<Product[]>(initialProducts);
+  const [searchTermDes, setSearchTermDes] = useState<string>('');
+  const [searchTermRef, setSearchTermRef] = useState<string>('');
+  const [searchTermGencod, setSearchTermGencod] = useState<string>('');
 
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
-    // Filter products based on search term
-    const filteredProducts = productsByCustomer.filter((product) =>
-      product.reference.toLowerCase().includes(value.toLowerCase()),
-    );
+  useEffect(() => {
+    let filteredProducts = initialProducts;
+
+    if (searchTermDes) {
+      filteredProducts = filteredProducts.filter((product) =>
+        product.designation.toLowerCase().includes(searchTermDes.toLowerCase()),
+      );
+    }
+
+    if (searchTermRef) {
+      filteredProducts = filteredProducts.filter((product) =>
+        product.reference.toLowerCase().includes(searchTermRef.toLowerCase()),
+      );
+    }
+
+    if (searchTermGencod) {
+      filteredProducts = filteredProducts.filter((product) =>
+        product.gencod.toLowerCase().includes(searchTermGencod.toLowerCase()),
+      );
+    }
+
     setProducts(filteredProducts);
+  }, [searchTermDes, searchTermRef, searchTermGencod, initialProducts]);
+
+  const handleSearch = (value: string, searchType: string) => {
+    switch (searchType) {
+      case 'des':
+        setSearchTermDes(value);
+        break;
+      case 'ref':
+        setSearchTermRef(value);
+        break;
+      case 'gencod':
+        setSearchTermGencod(value);
+        break;
+      default:
+        break;
+    }
   };
+  // console.log('clientSideComponent', products);
 
   return (
     <>
-      <CustomerProvider>
-        <CustomerContainer />
-        <SearchBar value={searchTerm} onChange={handleSearch} />
+      <OrderInfosProvider>
+        <CustomerContainer customer={customer} />
+        <SearchBar
+          searchTermDes={searchTermDes}
+          searchTermRef={searchTermRef}
+          searchTermGencod={searchTermGencod}
+          onChange={handleSearch}
+        />
         <ProductContainer products={products} />
-      </CustomerProvider>
+      </OrderInfosProvider>
     </>
   );
 };
