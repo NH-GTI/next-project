@@ -7,15 +7,17 @@ import {
 import { Customer } from '@/app/lib/definitions';
 import TopNav from '@/app/ui/dashboard/topnav';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 const ProductsPage = async () => {
   const cookiecustomerCode = cookies().get('customer-code')?.value as string;
+  if (!cookiecustomerCode) {
+    redirect('/dashboard/customers');
+  }
 
   const initialProducts = await fetchProducts();
   const customerProduct = await fetchCustomerProduct();
   const customer: Customer = await fetchCustomerById(cookiecustomerCode);
-  // console.log(customer.code_tarif);
-  // console.log(customerProduct);
 
   const filteredProducts = customerProduct
     .filter((item) => item.code_tarif === customer.code_tarif)

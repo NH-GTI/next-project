@@ -99,7 +99,7 @@ export type Product = {
   mini: number;
   gencod: string;
   price: number;
-  product_price: number;
+  product_price: number | string;
 };
 
 export type Order = {

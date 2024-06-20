@@ -7,6 +7,8 @@ import { useState, useRef, useEffect } from 'react';
 interface ProductProps {
   product: Product;
   sendDataToParent: (product: {
+    id: string;
+    designation: string;
     reference: string;
     quantity: number;
     price: number;
@@ -15,7 +17,13 @@ interface ProductProps {
 
 const ProductCard: React.FC<ProductProps> = ({ product, sendDataToParent }) => {
   const [order, setOrder] = useState<
-    { reference: String; quantity: number; price: number }[]
+    {
+      id: string;
+      designation: string;
+      reference: String;
+      quantity: number;
+      price: number;
+    }[]
   >([]);
   const [total, setTotal] = useState(0);
 
@@ -27,10 +35,14 @@ const ProductCard: React.FC<ProductProps> = ({ product, sendDataToParent }) => {
       const quantity = parseInt(quantityRef.current.value);
 
       const productToAdd: {
+        id: string;
+        designation: string;
         reference: string;
         quantity: number;
         price: number;
       } = {
+        id: product.id,
+        designation: product.designation,
         reference: product.reference,
         quantity: quantity,
         price: product.price * quantity,

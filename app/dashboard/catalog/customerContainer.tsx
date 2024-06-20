@@ -1,6 +1,5 @@
 'use client';
 
-import { useOrderInfos } from '@/app/components/OrderInfosProvider';
 import { Customer } from '@/app/lib/definitions';
 import { useEffect, useState } from 'react';
 
@@ -20,7 +19,7 @@ const CustomerContainer: React.FC<CustomerContainerComponentProps> = (
   return (
     <div>
       <h1 className="text-xl">
-        <span key={customer.customer.id}>
+        <span key={customer.customer.id} className="font-bold">
           {isClient
             ? customer.customer.name + ' ' + customer.customer.code
             : 'Pas de client'}

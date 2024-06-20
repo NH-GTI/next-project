@@ -35,7 +35,7 @@ export default function LoginForm() {
     <form className="space-y-3" onSubmit={handleSubmit}>
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={`${lusitana.className} mb-3 text-2xl`}>
-          Please log in to continue.
+          Connectez-vous
         </h1>
         <div className="w-full">
           <div>
@@ -64,7 +64,7 @@ export default function LoginForm() {
               className="mb-3 mt-5 block text-xs font-medium text-gray-900"
               htmlFor="password"
             >
-              Password
+              Mot de passe
             </label>
             <div className="relative">
               <input
@@ -92,7 +92,7 @@ export default function LoginForm() {
 function LoginButton() {
   return (
     <Button className="mt-4 w-full">
-      Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+      Se connecter <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
     </Button>
   );
 }

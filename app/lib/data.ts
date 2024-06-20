@@ -6,6 +6,7 @@ import {
   Product,
   Customer,
   CustomerProduct,
+  Order,
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -320,6 +321,24 @@ export async function fetchCustomerProduct(): Promise<CustomerProduct[]> {
   }
 }
 
+export async function fetchOrders(): Promise<Order[]> {
+  const client = await fetchDataFromDB();
+
+  try {
+    const data = await client.query(`
+		SELECT
+		  *
+		FROM orders 
+	  `);
+    client.release();
+
+    return data.rows;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch customer table.');
+  }
+}
+
 export async function sendOrder(products: Product) {
   const client = await fetchDataFromDB();
 
@@ -335,3 +354,5 @@ export async function sendOrder(products: Product) {
     throw new Error('Failed to fetch customer table.');
   }
 }
+
+export { fetchDataFromDB };
