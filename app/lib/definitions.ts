@@ -131,3 +131,17 @@ export type CustomerProduct = {
   product_ref: string;
   product_price: number;
 };
+
+export type QRCode = {
+  id: string;
+  name: string;
+  url: string;
+  file_name: string;
+  file_size: string;
+  img: string;
+  is_file: boolean;
+  created_at: Date;
+  updated_at: Date;
+  created_by: Date;
+  updated_by: Date;
+};

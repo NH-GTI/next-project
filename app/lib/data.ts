@@ -7,6 +7,7 @@ import {
   Customer,
   CustomerProduct,
   Order,
+  QRCode,
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -352,6 +353,42 @@ export async function sendOrder(products: Product) {
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch customer table.');
+  }
+}
+
+export async function fetchQRCode(): Promise<QRCode[]> {
+  const client = await fetchDataFromDB();
+
+  try {
+    const data = await client.query(`
+        SELECT * from qrcode
+      `);
+    client.release();
+
+    return data.rows;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch qrcode table.');
+  }
+}
+
+export async function createQRCode(qrcode: QRCode) {
+  const client = await fetchDataFromDB();
+
+  try {
+    const data = await client.query(
+      `
+        INSERT INTO qrcode (name, url, img, file_name, file_size, created_at, updated_at, is_file, created_by, updated_by) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      `,
+      [],
+    );
+    client.release();
+
+    return data.rows;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch qrcode table.');
   }
 }
 
