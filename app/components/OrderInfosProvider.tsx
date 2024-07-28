@@ -1,5 +1,3 @@
-'use client';
-
 import { createContext, useContext } from 'react';
 import { getCookie } from 'cookies-next';
 
@@ -9,24 +7,25 @@ type OrderInfos = {
 };
 
 const cookieCustomerCode: string = getCookie('customer-code') as string;
+const cookieOrderCode: string = getCookie('order-code') as string;
 
 const defaultOrderInfos: OrderInfos = {
-  orderID: '000000',
+  orderID: cookieOrderCode,
   customerCode: cookieCustomerCode,
 };
 
-const CustomerContext = createContext<OrderInfos>(defaultOrderInfos);
+const OrderInfosContext = createContext<OrderInfos>(defaultOrderInfos);
 
-export const CustomerProvider = ({
+export const OrderInfosProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
   return (
-    <CustomerContext.Provider value={defaultOrderInfos}>
+    <OrderInfosContext.Provider value={defaultOrderInfos}>
       {children}
-    </CustomerContext.Provider>
+    </OrderInfosContext.Provider>
   );
 };
 
-export const useCustomer = () => useContext(CustomerContext);
+export const useOrderInfos = () => useContext(OrderInfosContext);

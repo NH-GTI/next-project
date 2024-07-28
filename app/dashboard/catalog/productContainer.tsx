@@ -11,17 +11,25 @@ interface ProductContainerProps {
 
 const ProductContainer: React.FC<ProductContainerProps> = ({ products }) => {
   const [orderProduct, setOrderProduct] = useState<
-    { id: string; reference: string; quantity: number; price: number }[]
+    {
+      id: string;
+      designation: string;
+      reference: string;
+      quantity: number;
+      price: number;
+    }[]
   >([]);
+
   const handleOrderProduct = (productToAdd: {
     id: string;
+    designation: string;
     reference: string;
     quantity: number;
     price: number;
   }) => {
     setOrderProduct((prevData) => {
       const existingProductIndex = prevData.findIndex(
-        (p) => p.id === productToAdd.id,
+        (p) => p.reference === productToAdd.reference,
       );
 
       if (existingProductIndex >= 0) {
@@ -31,7 +39,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ products }) => {
             return {
               ...item,
               quantity: item.quantity + productToAdd.quantity,
-              price: item.price + productToAdd.price,
+              price: parseFloat((item.price + productToAdd.price).toFixed(2)),
             };
           }
           return item;
@@ -45,9 +53,31 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ products }) => {
     });
   };
 
+  const handleDeleteProduct = (reference: string) => {
+    setOrderProduct((prevData) =>
+      prevData.filter((product) => product.reference !== reference),
+    );
+  };
+
+  const totalQuantity = orderProduct.reduce(
+    (total, product) => total + product.quantity,
+    0,
+  );
+
+  const totalPrice = parseFloat(
+    orderProduct
+      .reduce((total, product) => total + product.price, 0)
+      .toFixed(2),
+  );
+
   return (
     <>
-      <OrderContainer products={orderProduct} />
+      <OrderContainer
+        products={orderProduct}
+        onDelete={handleDeleteProduct}
+        totalQuantity={totalQuantity}
+        totalPrice={totalPrice}
+      />
       <div className="flex flex-row flex-wrap justify-around">
         {products.map((product) => (
           <ProductCard

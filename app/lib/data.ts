@@ -6,6 +6,8 @@ import {
   Product,
   Customer,
   CustomerProduct,
+  Order,
+  QRCode,
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -250,6 +252,7 @@ export async function fetchProducts(): Promise<Product[]> {
 		SELECT
 		  *
 		FROM products
+    LIMIT 500
 	  `);
     client.release();
 
@@ -278,7 +281,7 @@ export async function fetchCustomers(): Promise<Customer[]> {
   }
 }
 
-export async function fetchCustomerById(code: string): Promise<Customer[]> {
+export async function fetchCustomerById(code: string): Promise<Customer> {
   const client = await fetchDataFromDB();
 
   try {
@@ -292,8 +295,9 @@ export async function fetchCustomerById(code: string): Promise<Customer[]> {
       [code],
     );
     client.release();
+    console.log(data.rows[0]);
 
-    return data.rows;
+    return data.rows[0];
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch customer table.');
@@ -308,6 +312,24 @@ export async function fetchCustomerProduct(): Promise<CustomerProduct[]> {
 		SELECT
 		  *
 		FROM customer_product
+	  `);
+    client.release();
+
+    return data.rows;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch customer table.');
+  }
+}
+
+export async function fetchOrders(): Promise<Order[]> {
+  const client = await fetchDataFromDB();
+
+  try {
+    const data = await client.query(`
+		SELECT
+		  *
+		FROM orders 
 	  `);
     client.release();
 
@@ -333,3 +355,41 @@ export async function sendOrder(products: Product) {
     throw new Error('Failed to fetch customer table.');
   }
 }
+
+export async function fetchQRCode(): Promise<QRCode[]> {
+  const client = await fetchDataFromDB();
+
+  try {
+    const data = await client.query(`
+        SELECT * from qrcode
+      `);
+    client.release();
+
+    return data.rows;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch qrcode table.');
+  }
+}
+
+export async function createQRCode(qrcode: QRCode) {
+  const client = await fetchDataFromDB();
+
+  try {
+    const data = await client.query(
+      `
+        INSERT INTO qrcode (name, url, img, file_name, file_size, created_at, updated_at, is_file, created_by, updated_by) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      `,
+      [],
+    );
+    client.release();
+
+    return data.rows;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch qrcode table.');
+  }
+}
+
+export { fetchDataFromDB };
